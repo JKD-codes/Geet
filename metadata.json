@@ -1,0 +1,5 @@
+{
+  "name": "Geet",
+  "description": "A fully functional music streaming app with playlist management, robust audio player, and mobile lock-screen media controls.",
+  "requestFramePermissions": []
+}
