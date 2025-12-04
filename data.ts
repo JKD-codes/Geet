@@ -9,8 +9,8 @@ import { Playlist, Song } from './types';
 // =========================================================================
 
 const ENGLISH_URLS = [
-  "./English/Blinding_Lights.mp3",
-  "./English/Shape_of_you.mp3",
+  "../English/Blinding_Lights.mp3",
+  "../English/Shape_of_you.mp3",
   "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
   "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
   "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
@@ -327,3 +327,4 @@ export const PLAYLISTS: Playlist[] = [
 export const getAllSongs = (): Song[] => {
   return PLAYLISTS.flatMap(playlist => playlist.songs);
 };
+
