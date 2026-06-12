@@ -5,11 +5,20 @@ import { usePlayerStore } from '@/store/playerStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { X } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, X } from 'lucide-react';
 
-export function LyricsPanel({ isExpanded, onClose }: { isExpanded: boolean, onClose: () => void }) {
+interface ExpandedPlayerProps {
+  isExpanded: boolean;
+  onClose: () => void;
+  progress: number;
+  duration: number;
+  onSeek: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  formatTime: (time: number) => string;
+}
+
+export function ExpandedPlayer({ isExpanded, onClose, progress, duration, onSeek, formatTime }: ExpandedPlayerProps) {
   const [mounted, setMounted] = useState(false);
-  const { currentSong } = usePlayerStore();
+  const { currentSong, isPlaying, togglePlayPause, playNext, playPrevious } = usePlayerStore();
   
   const { data: lyrics, isLoading } = useLyrics({
     trackName: currentSong?.title,
@@ -31,7 +40,7 @@ export function LyricsPanel({ isExpanded, onClose }: { isExpanded: boolean, onCl
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: '100%' }}
           transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-          className="fixed inset-0 z-40 bg-black/95 backdrop-blur-3xl flex flex-col md:flex-row items-center justify-center p-8 pb-32 pt-20"
+          className="fixed inset-0 z-[60] bg-black/95 backdrop-blur-3xl flex flex-col md:flex-row items-center justify-center p-8 pb-32 pt-20"
         >
           <button 
             onClick={onClose}
@@ -40,7 +49,7 @@ export function LyricsPanel({ isExpanded, onClose }: { isExpanded: boolean, onCl
             <X className="w-6 h-6" />
           </button>
           
-          <div className="w-full md:w-1/2 flex flex-col items-center justify-center gap-8 mb-8 md:mb-0">
+          <div className="w-full md:w-1/2 flex flex-col items-center justify-center gap-6 mb-8 md:mb-0">
             <motion.div 
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -54,9 +63,40 @@ export function LyricsPanel({ isExpanded, onClose }: { isExpanded: boolean, onCl
                 className="w-full h-full object-cover"
               />
             </motion.div>
-            <div className="text-center">
-              <h2 className="text-3xl font-bold tracking-tight text-white">{currentSong.title}</h2>
-              <p className="text-xl text-white/60 mt-2">{currentSong.artists?.map(a => a.name).join(', ')}</p>
+            <div className="text-center w-full max-w-sm px-4">
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-white truncate">{currentSong.title}</h2>
+              <p className="text-lg md:text-xl text-white/60 mt-1 truncate">{currentSong.artists?.map(a => a.name).join(', ')}</p>
+            </div>
+
+            {/* Playback Controls (Mobile mainly, but useful on desktop too) */}
+            <div className="w-full max-w-sm px-4 flex flex-col gap-4 mt-2">
+              <div className="flex items-center gap-3 text-xs text-white/60 font-mono">
+                <span className="w-10 text-right">{formatTime(progress)}</span>
+                <input 
+                  type="range" 
+                  min={0} 
+                  max={duration || 100} 
+                  value={progress} 
+                  onChange={onSeek}
+                  className="flex-1 h-1.5 bg-white/20 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full"
+                />
+                <span className="w-10">{formatTime(duration)}</span>
+              </div>
+              
+              <div className="flex items-center justify-center gap-8 mt-2">
+                <button onClick={playPrevious} className="text-white/70 hover:text-white transition-colors">
+                  <SkipBack className="w-8 h-8 fill-current" />
+                </button>
+                <button 
+                  onClick={togglePlayPause}
+                  className="w-16 h-16 rounded-full bg-white text-black flex items-center justify-center hover:scale-105 transition-transform"
+                >
+                  {isPlaying ? <Pause className="w-8 h-8 fill-current" /> : <Play className="w-8 h-8 fill-current ml-1" />}
+                </button>
+                <button onClick={playNext} className="text-white/70 hover:text-white transition-colors">
+                  <SkipForward className="w-8 h-8 fill-current" />
+                </button>
+              </div>
             </div>
           </div>
           

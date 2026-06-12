@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { usePlayerStore } from '@/store/playerStore';
 import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Shuffle, Repeat, Maximize2 } from 'lucide-react';
 import Image from 'next/image';
-import { LyricsPanel } from '@/features/lyrics/LyricsPanel';
+import { ExpandedPlayer } from './ExpandedPlayer';
 import ReactPlayer from 'react-player';
 
 export function Player() {
@@ -137,7 +137,14 @@ export function Player() {
         </button>
       </div>
 
-      <LyricsPanel isExpanded={isExpanded} onClose={() => setIsExpanded(false)} />
+      <ExpandedPlayer 
+        isExpanded={isExpanded} 
+        onClose={() => setIsExpanded(false)} 
+        progress={progress}
+        duration={duration || (currentSong?.durationSeconds ?? 0)}
+        onSeek={handleSeek}
+        formatTime={formatTime}
+      />
     </div>
   );
 }
