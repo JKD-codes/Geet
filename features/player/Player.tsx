@@ -38,8 +38,8 @@ export function Player() {
           url={`https://www.youtube.com/watch?v=${currentSong.videoId}`}
           playing={isPlaying}
           volume={volume / 100}
-          onProgress={({ playedSeconds }) => setProgress(playedSeconds)}
-          onDuration={(d) => setDuration(d)}
+          onProgress={(state: any) => setProgress(state.playedSeconds)}
+          onDuration={(d: any) => setDuration(d)}
           onEnded={playNext}
           width="0"
           height="0"
