@@ -4,69 +4,20 @@ import { useEffect, useRef, useState } from 'react';
 import { usePlayerStore } from '@/store/playerStore';
 import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Shuffle, Repeat, Maximize2 } from 'lucide-react';
 import Image from 'next/image';
-import { musicProvider } from '@/services/music';
 import { LyricsPanel } from '@/features/lyrics/LyricsPanel';
+import ReactPlayer from 'react-player/youtube';
 
 export function Player() {
   const { currentSong, isPlaying, volume, togglePlayPause, playNext, playPrevious, setVolume } = usePlayerStore();
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [streamUrl, setStreamUrl] = useState<string | null>(null);
+  const playerRef = useRef<ReactPlayer>(null);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Fetch stream url when song changes
-  useEffect(() => {
-    if (!currentSong) return;
-    let isMounted = true;
-    
-    const fetchStream = async () => {
-      try {
-        const url = await musicProvider.getStreamUrl(currentSong.videoId);
-        if (isMounted) {
-          setStreamUrl(url);
-        }
-      } catch (err) {
-        console.error("Failed to fetch stream", err);
-        playNext(); // skip on error
-      }
-    };
-    
-    setStreamUrl(null);
-    fetchStream();
-    
-    return () => { isMounted = false; };
-  }, [currentSong, playNext]);
-
-  // Sync play/pause state
-  useEffect(() => {
-    if (audioRef.current) {
-      if (isPlaying && streamUrl) {
-        audioRef.current.play().catch(console.error);
-      } else {
-        audioRef.current.pause();
-      }
-    }
-  }, [isPlaying, streamUrl]);
-
-  // Sync volume
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume / 100;
-    }
-  }, [volume]);
-
-  const handleTimeUpdate = () => {
-    if (audioRef.current) {
-      setProgress(audioRef.current.currentTime);
-      setDuration(audioRef.current.duration);
-    }
-  };
-
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = Number(e.target.value);
-    if (audioRef.current) {
-      audioRef.current.currentTime = val;
+    if (playerRef.current) {
+      playerRef.current.seekTo(val, 'seconds');
       setProgress(val);
     }
   };
@@ -81,13 +32,23 @@ export function Player() {
   return (
     <div className="fixed bottom-16 md:bottom-0 w-full h-16 md:h-24 bg-card/80 backdrop-blur-lg border-t border-white/5 flex items-center justify-between px-2 md:px-6 z-50">
       
-      {streamUrl && (
-        <audio 
-          ref={audioRef} 
-          src={streamUrl} 
-          onTimeUpdate={handleTimeUpdate}
+      {currentSong && (
+        <ReactPlayer
+          ref={playerRef}
+          url={`https://www.youtube.com/watch?v=${currentSong.videoId}`}
+          playing={isPlaying}
+          volume={volume / 100}
+          onProgress={({ playedSeconds }) => setProgress(playedSeconds)}
+          onDuration={(d) => setDuration(d)}
           onEnded={playNext}
-          autoPlay={isPlaying}
+          width="0"
+          height="0"
+          style={{ display: 'none' }}
+          config={{
+            youtube: {
+              playerVars: { showinfo: 0, controls: 0 }
+            }
+          }}
         />
       )}
 
