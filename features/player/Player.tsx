@@ -35,20 +35,22 @@ export function Player() {
       {currentSong && (
         <ReactPlayer
           ref={playerRef}
-          url={`https://www.youtube.com/watch?v=${currentSong.videoId}`}
-          playing={isPlaying}
-          volume={volume / 100}
-          onProgress={(state: any) => setProgress(state.playedSeconds)}
-          onDuration={(d: any) => setDuration(d)}
-          onEnded={playNext}
-          width="0"
-          height="0"
-          style={{ display: 'none' }}
-          config={{
-            youtube: {
-              playerVars: { showinfo: 0, controls: 0 }
+          {...({
+            src: `https://www.youtube.com/watch?v=${currentSong.videoId}`,
+            playing: isPlaying,
+            volume: volume / 100,
+            onProgress: (state: any) => setProgress(state.playedSeconds),
+            onDuration: (d: any) => setDuration(d),
+            onEnded: playNext,
+            width: "0",
+            height: "0",
+            style: { display: 'none' },
+            config: {
+              youtube: {
+                playerVars: { showinfo: 0, controls: 0 }
+              }
             }
-          } as any}
+          } as any)}
         />
       )}
 
