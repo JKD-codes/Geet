@@ -4,7 +4,7 @@ from ytmusicapi import YTMusic
 from typing import Optional
 import yt_dlp
 
-app = FastAPI(title="Geet YTMusic API")
+app = FastAPI(title="Geet YTMusic API", docs_url="/api/docs", openapi_url="/api/openapi.json")
 
 # Setup CORS so the Next.js app can fetch locally during development
 app.add_middleware(
@@ -18,11 +18,11 @@ app.add_middleware(
 # Initialize YTMusic
 ytmusic = YTMusic()
 
-@app.get("/")
+@app.get("/api")
 def read_root():
-    return {"status": "ok", "message": "Geet YTMusic API is running"}
+    return {"status": "ok", "message": "Geet YTMusic API is running on Vercel Serverless"}
 
-@app.get("/search")
+@app.get("/api/search")
 def search(q: str, filter: Optional[str] = None, limit: int = 20):
     try:
         results = ytmusic.search(query=q, filter=filter, limit=limit)
@@ -30,7 +30,7 @@ def search(q: str, filter: Optional[str] = None, limit: int = 20):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/song/{video_id}")
+@app.get("/api/song/{video_id}")
 def get_song(video_id: str):
     try:
         song = ytmusic.get_song(video_id)
@@ -38,7 +38,7 @@ def get_song(video_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/artist/{channel_id}")
+@app.get("/api/artist/{channel_id}")
 def get_artist(channel_id: str):
     try:
         artist = ytmusic.get_artist(channel_id)
@@ -46,7 +46,7 @@ def get_artist(channel_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/album/{browse_id}")
+@app.get("/api/album/{browse_id}")
 def get_album(browse_id: str):
     try:
         album = ytmusic.get_album(browse_id)
@@ -54,7 +54,7 @@ def get_album(browse_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/up-next/{video_id}")
+@app.get("/api/up-next/{video_id}")
 def get_up_next(video_id: str):
     try:
         # Get 'up next' or watch playlist for recommendations
@@ -63,7 +63,7 @@ def get_up_next(video_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/stream/{video_id}")
+@app.get("/api/stream/{video_id}")
 def get_stream_url(video_id: str):
     ydl_opts = {
         'format': 'bestaudio/best',

@@ -79,7 +79,7 @@ export function Player() {
   };
 
   return (
-    <div className="fixed bottom-0 w-full h-24 bg-card/80 backdrop-blur-lg border-t border-white/5 flex items-center justify-between px-6 z-50">
+    <div className="fixed bottom-16 md:bottom-0 w-full h-16 md:h-24 bg-card/80 backdrop-blur-lg border-t border-white/5 flex items-center justify-between px-2 md:px-6 z-50">
       
       {streamUrl && (
         <audio 
@@ -93,12 +93,12 @@ export function Player() {
 
       {/* Left: Song Info */}
       <div 
-        className="flex items-center gap-4 w-1/2 md:w-1/3 min-w-0 cursor-pointer hover:bg-white/5 rounded-md p-1 transition-colors -ml-1"
+        className="flex items-center gap-2 md:gap-4 w-1/2 md:w-1/3 min-w-0 cursor-pointer hover:bg-white/5 rounded-md p-1 transition-colors -ml-1"
         onClick={() => setIsExpanded(true)}
       >
         {currentSong ? (
           <>
-            <div className="relative w-12 h-12 md:w-14 md:h-14 bg-muted rounded-md shrink-0 shadow-md overflow-hidden">
+            <div className="relative w-10 h-10 md:w-14 md:h-14 bg-muted rounded-md shrink-0 shadow-md overflow-hidden">
                {currentSong.thumbnails?.length > 0 && (
                  <Image src={currentSong.thumbnails[currentSong.thumbnails.length - 1].url} alt="Cover" fill className="object-cover" />
                )}

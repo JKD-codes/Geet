@@ -1,7 +1,7 @@
 import { ISong, IPlaylist, IArtist } from '@/types/music';
 
 // This acts as a wrapper around the Next.js API routes which proxy to the Python FastAPI backend
-const API_BASE = '/api/music';
+const API_BASE = '/api';
 
 export const musicProvider = {
   search: async (query: string, filter?: string, limit: number = 20): Promise<any[]> => {
