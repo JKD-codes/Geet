@@ -17,7 +17,7 @@ export function Player() {
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = Number(e.target.value);
     if (playerRef.current) {
-      playerRef.current.seekTo(val, 'seconds');
+      playerRef.current.currentTime = val;
       setProgress(val);
     }
   };
