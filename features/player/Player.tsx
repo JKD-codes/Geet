@@ -9,7 +9,7 @@ import ReactPlayer from 'react-player';
 
 export function Player() {
   const { currentSong, isPlaying, volume, togglePlayPause, playNext, playPrevious, setVolume } = usePlayerStore();
-  const playerRef = useRef<ReactPlayer>(null);
+  const playerRef = useRef<any>(null);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
