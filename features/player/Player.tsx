@@ -48,7 +48,7 @@ export function Player() {
             youtube: {
               playerVars: { showinfo: 0, controls: 0 }
             }
-          }}
+          } as any}
         />
       )}
 
