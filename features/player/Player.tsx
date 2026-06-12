@@ -14,6 +14,10 @@ export function Player() {
   const [duration, setDuration] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
 
+  useEffect(() => {
+    setProgress(0);
+  }, [currentSong?.videoId]);
+
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = Number(e.target.value);
     if (playerRef.current) {
@@ -39,8 +43,8 @@ export function Player() {
             src: `https://www.youtube.com/watch?v=${currentSong.videoId}`,
             playing: isPlaying,
             volume: volume / 100,
-            onProgress: (state: any) => setProgress(state.playedSeconds),
-            onDuration: (d: any) => setDuration(d),
+            onTimeUpdate: (e: any) => setProgress(e.currentTarget.currentTime),
+            onDurationChange: (e: any) => setDuration(e.currentTarget.duration),
             onEnded: playNext,
             width: "0",
             height: "0",
