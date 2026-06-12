@@ -5,7 +5,7 @@ import { usePlayerStore } from '@/store/playerStore';
 import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Shuffle, Repeat, Maximize2 } from 'lucide-react';
 import Image from 'next/image';
 import { LyricsPanel } from '@/features/lyrics/LyricsPanel';
-import ReactPlayer from 'react-player/youtube';
+import ReactPlayer from 'react-player';
 
 export function Player() {
   const { currentSong, isPlaying, volume, togglePlayPause, playNext, playPrevious, setVolume } = usePlayerStore();
