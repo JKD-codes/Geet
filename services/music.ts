@@ -39,6 +39,32 @@ export const musicProvider = {
   },
 
   getStreamUrl: async (videoId: string): Promise<string> => {
+    // Public Piped API instances provide proxied, IP-unbound streaming URLs
+    const PIPED_INSTANCES = [
+      'https://pipedapi.kavin.rocks',
+      'https://pipedapi.smnz.de',
+      'https://pipedapi.adminforge.de'
+    ];
+
+    for (const instance of PIPED_INSTANCES) {
+      try {
+        const pipedRes = await fetch(`${instance}/streams/${videoId}`);
+        if (pipedRes.ok) {
+          const data = await pipedRes.json();
+          const audioStreams = data.audioStreams;
+          if (audioStreams && audioStreams.length > 0) {
+            // Prefer m4a format for maximum browser compatibility
+            const bestStream = audioStreams.find((s: any) => s.mimeType?.includes('audio/mp4')) || audioStreams[0];
+            return bestStream.url;
+          }
+        }
+      } catch (e) {
+        continue; // Try next instance
+      }
+    }
+
+    // Fallback to our python backend (Works locally, but might face IP-binding issues on Vercel)
+    console.warn("Piped instances failed. Falling back to internal python extractor...");
     const response = await fetch(`${API_BASE}/stream/${videoId}`);
     if (!response.ok) throw new Error('Failed to get stream URL');
     const data = await response.json();
